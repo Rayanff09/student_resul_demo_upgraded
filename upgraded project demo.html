@@ -71,10 +71,15 @@
   <script>
     function getResult() {
       var rollNo = document.getElementById("rollNo").value;
-      var url = "https://script.google.com/macros/s/AKfycbzPyvgNRTo2uLfEZogRxZK0YXh554qoyDv5X9Tc0yMu36GDu2X0B9z8ctnF8vBp3a6c8g/exec?rollNo=" + rollNo;
+      var url = "https://script.google.com/macros/s/AKfycby2C_ozY9Dg7ZhU9RAvM7Kf6mEmSThoElcuUQWJ6azofvYxdaVsOTYi6GMtVBtTQU3LzQ/exec?rollNo=" + rollNo;
 
       fetch(url)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+          }
+          return response.json();
+        })
         .then(data => {
           var resultDiv = document.getElementById("result");
           if (data.name) {
@@ -88,8 +93,12 @@
               <p><strong>Division:</strong> ${data.division}</p>
             `;
           } else {
-            resultDiv.innerHTML = <p>${data}</p>;
+            resultDiv.innerHTML = `<p>${data}</p>`;
           }
+        })
+        .catch(error => {
+          var resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
         });
     }
   </script>
