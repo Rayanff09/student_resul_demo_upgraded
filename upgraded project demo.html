@@ -75,11 +75,41 @@
   <script>
     async function getResult() {
       var rollNo = document.getElementById("rollNo").value;
-      var url = "https://script.google.com/macros/s/AKfycbySkSOjkNMI4hXqe30rs_a-EvURD22eIlWRTgMSs67YyW0UqB3z5PO-yDcc_DP-4bxYHg/exec?rollNo=" + rollNo;
+      var url = "https://script.google.com/macros/s/AKfycbxfO06Fzn3GoEo8gtZd-5tw1c6_fWQDLwIvS5S90IJbmjniijHxkuXcZIaWGMBCUk07ug/exec?rollNo=" + rollNo;
       var resultDiv = document.getElementById("result");
       resultDiv.innerHTML = `<div class="loader"></div>`;  // Show loader
 
       try {
         const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.status
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        const data = await response.json();
+        if (data.name) {
+          resultDiv.innerHTML = `
+            <p><strong>Name:</strong> ${data.name}</p>
+            <p><strong>Father Name:</strong> ${data.fatherName}</p>
+            <p><strong>Bengali:</strong> ${data.bengali}</p>
+            <p><strong>English:</strong> ${data.english}</p>
+            <p><strong>Math:</strong> ${data.math}</p>
+            <p><strong>Total:</strong> ${data.total}</p>
+            <p><strong>Division:</strong> ${data.division}</p>
+          `;
+        } else {
+          resultDiv.innerHTML = `<p>${data}</p>`;
+        }
+      } catch (error) {
+        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+        console.error('Fetch error:', error);
+      }
+    }
+
+    function exportToPDF() {
+      var resultDiv = document.getElementById("result");
+      var doc = new jspdf.jsPDF();
+      doc.text(resultDiv.innerText, 10, 10);
+      doc.save('result.pdf');
+    }
+  </script>
+</body>
+</html>
