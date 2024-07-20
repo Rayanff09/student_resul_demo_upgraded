@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Result</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h2 {
+      color: #333;
+    }
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    input[type="number"] {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    #result {
+      margin-top: 20px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    p {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h2>Enter Roll Number</h2>
+  <form id="resultForm">
+    Roll Number: <input type="number" id="rollNo" required><br>
+    <button type="button" onclick="getResult()">Submit</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    function getResult() {
+      var rollNo = document.getElementById("rollNo").value;
+      var url = "https://script.google.com/macros/s/AKfycbyBLhVuIO3QK8vstl6APozLPDRtIgzac5VYyAIMvYu0U5ir1UClXQtGhuDC0oCuB_gstQ/exec?rollNo=" + rollNo;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+          }
+          return response.json();
+        })
+        .then(data => {
+          var resultDiv = document.getElementById("result");
+          if (data.name) {
+            resultDiv.innerHTML = `
+              <p><strong>Name:</strong> ${data.name}</p>
+              <p><strong>Father Name:</strong> ${data.fatherName}</p>
+              <p><strong>Bengali:</strong> ${data.bengali}</p>
+              <p><strong>English:</strong> ${data.english}</p>
+              <p><strong>Math:</strong> ${data.math}</p>
+              <p><strong>Total:</strong> ${data.total}</p>
+              <p><strong>Division:</strong> ${data.division}</p>
+            `;
+          } else {
+            resultDiv.innerHTML = <p>${data}</p>;
+          }
+        })
+        .catch(error => {
+          var resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = <p>Error: ${error.message}</p>;
+        });
+    }
+  </script>
+</body>
+</html>
